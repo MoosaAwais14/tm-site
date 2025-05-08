@@ -159,6 +159,7 @@
                 <button id="grayscale-btn">Grayscale</button>
                 <button id="invert-btn">Invert</button>
                 <button id="sepia-btn">Sepia</button>
+                <button id="green-btn">Green</button>
                 <button id="reset-btn">Reset</button>
             </div>
             
@@ -278,6 +279,7 @@
             document.getElementById('grayscale-btn').addEventListener('click', () => applyFilter('grayscale'));
             document.getElementById('invert-btn').addEventListener('click', () => applyFilter('invert'));
             document.getElementById('sepia-btn').addEventListener('click', () => applyFilter('sepia'));
+            document.getElementById('green-btn').addEventListener('click', () => applyFilter('green'));
             document.getElementById('reset-btn').addEventListener('click', resetImage);
             document.getElementById('crop-square-btn').addEventListener('click', () => cropImage('square'));
             document.getElementById('crop-circle-btn').addEventListener('click', () => cropImage('circle'));
@@ -466,6 +468,14 @@
                         data[i + 2] = Math.min(255, (r * 0.272) + (g * 0.534) + (b * 0.131)); // Blue
                     }
                     break;
+                case 'green':
+                    for (let i = 0; i < data.length; i += 4) {
+                        // Enhance green channel and reduce others for a green effect
+                        data[i] = data[i] * 0.3; // Reduce red
+                        data[i + 1] = Math.min(255, data[i + 1] * 1.5); // Enhance green
+                        data[i + 2] = data[i + 2] * 0.3; // Reduce blue
+                    }
+                    break;
             }
             
             // Update current image data
@@ -527,7 +537,15 @@
         }
         
         // Initialize the app when page loads
-        window.addEventListener('DOMContentLoaded', init);
+        window.addEventListener('DOMContentLoaded', () => {
+            // Display setup instructions if we're running locally
+            if (window.location.protocol === 'file:') {
+                console.warn("Running from a local file. This may cause CORS issues with model loading.");
+                console.warn("Consider using a web server like VS Code's Live Server extension or Python's http.server.");
+            }
+            
+            init();
+        });
     </script>
 </body>
 </html>
